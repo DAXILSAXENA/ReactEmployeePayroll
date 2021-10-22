@@ -14,26 +14,28 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from '@mui/material/Button';
 import { DialogContent } from '@mui/material';
-
+import UserService from '../../service/userService/User';
 
 
 function FormDialog({ openDialogBox, employee }) {
     
+    var [employeeId, setEmployeeID] = React.useState(employee.employeeId)
     var [name, setName] = React.useState(employee.name);
     var [note, setNote] = React.useState(employee.note);
     var [profilePic, setProfilePic] = React.useState(employee.profilePic);
     var [gender, setGender] = React.useState(employee.gender);
     var [salary, setSalary] = React.useState(employee.salary);
-    var [createdDate, setCreatedDate] = React.useState(employee.createdDate);
+    var [createdDate, setCreatedDate] = React.useState(new Date(employee.createdDate));
     var [department, setDepartment] = React.useState([]);
 
-    console.log(employee.name);
-    console.log(name);
-
-    React.useEffect(() => {
-        department.map(dept => department)
-    })
+    // console.log(employee.name);
+    // console.log(name);
+    // console.log(department);
     
+    React.useEffect( () => {
+        setEmployeeID(employee.employeeId)
+    },[employee.employeeId])
+
     React.useEffect( () => {
         setName(employee.name)
     },[employee.name])
@@ -98,12 +100,12 @@ function FormDialog({ openDialogBox, employee }) {
         setGender(e.target.value);
     }
 
-    // let handleChangeDepartment = (e) => {
-    //     let newDepartment = e.target.value;
-    //     console.log(e.target.value);
-    //     setDepartment(dept => ({ department: [...dept.department, newDepartment] }));
-    //     // console.log(this.state.department);
-    // }
+    let handleChangeDepartment = (e) => {
+        let newDepartment = e.target.value;
+        console.log(e.target.value);
+        setDepartment(department => [...department, newDepartment]);
+        
+    }
 
     let handleChangeSalary = (e) => {
         console.log(e.target.value);
@@ -118,6 +120,26 @@ function FormDialog({ openDialogBox, employee }) {
     let handleChangeNote = (e) => {
         console.log(e.target.value);
         setNote(e.target.value);
+    }
+
+    let formUpdate = (e) => {
+        let empID = employeeId
+        let employee = {
+            name: name,
+            profilePic: profilePic,
+            gender: gender,
+            department: department,
+            salary: salary,
+            createdDate: createdDate,
+            note: note,
+        }
+        
+        UserService.updateUser(employee,empID).then((data) => {
+            console.log(data);
+            // this.props.history.push("/");
+        })
+        
+        
     }
 
     return (
@@ -173,7 +195,7 @@ function FormDialog({ openDialogBox, employee }) {
                                 <FormLabel className="label text">Department</FormLabel>
                                 {departments.map((department, i) =>
                                     <FormControlLabel control={<Checkbox />} label={department.name} key={i}
-                                        value={department} />
+                                        value={department.name} onChange={handleChangeDepartment}/>
                                 )}
                             </div>
                             {/* Salary */}
@@ -188,7 +210,7 @@ function FormDialog({ openDialogBox, employee }) {
                             {/* Start Date */}
                             <div className="row-content">
                                 <FormLabel className="label text">Start Date</FormLabel>
-                                <DatePicker className="text-field" value={createdDate} onChange={handleChangeDate}/>
+                                <DatePicker className="text-field" selected={new Date(createdDate)} onChange={handleChangeDate}/>
                             </div>
                             {/* Notes */}
                             <div className="row-content">
@@ -212,7 +234,7 @@ function FormDialog({ openDialogBox, employee }) {
                     <a href="/">
                         <Button>Cancel</Button>
                     </a>
-                    <Button>Update</Button>
+                    <Button onClick={formUpdate}>Update</Button>
                 </DialogActions>
             </Dialog>
         </div>

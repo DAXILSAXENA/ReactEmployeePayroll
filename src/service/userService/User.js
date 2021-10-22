@@ -14,3 +14,9 @@ exports.addUser = (data) => {
     let url = "/create/"
     return httpService.postService(url,data)
 }
+
+exports.updateUser = (data,id) => {
+    let url = "/update/"+ id
+    console.log(id)
+    return httpService.updateService(url,data)
+}

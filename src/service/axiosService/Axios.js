@@ -12,3 +12,7 @@ exports.deleteService = (url) => {
 exports.postService = (url,data) => {
     return axios.post(baseUrl + url,data)
 }
+
+exports.updateService = (url,data) => {
+    return axios.put(baseUrl + url,data)
+}
